@@ -6,9 +6,6 @@ dpkg --get-selections | grep -v deinstall
 # Remove some packages to get a minimal install
 echo "==> Removing all linux kernels except the currrent one"
 dpkg --list | awk '{ print $2 }' | grep 'linux-image-3.*-generic' | grep -v $(uname -r) | xargs apt-get -y purge
-echo "==> Removing linux headers"
-dpkg --list | awk '{ print $2 }' | grep linux-headers | xargs apt-get -y purge
-rm -rf /usr/src/linux-headers*
 echo "==> Removing linux source"
 dpkg --list | awk '{ print $2 }' | grep linux-source | xargs apt-get -y purge
 echo "==> Removing development packages"
@@ -16,11 +13,7 @@ dpkg --list | awk '{ print $2 }' | grep -- '-dev$' | xargs apt-get -y purge
 echo "==> Removing documentation"
 dpkg --list | awk '{ print $2 }' | grep -- '-doc$' | xargs apt-get -y purge
 echo "==> Removing development tools"
-#dpkg --list | grep -i compiler | awk '{ print $2 }' | xargs apt-get -y purge
-#apt-get -y purge cpp gcc g++ 
 apt-get -y purge build-essential
-echo "==> Removing default system Ruby"
-apt-get -y purge ruby ri doc
 echo "==> Removing default system Python"
 apt-get -y purge python-dbus libnl1 python-smartpm python-twisted-core libiw30 python-twisted-bin libdbus-glib-1-2 python-pexpect python-pycurl python-serial python-gobject python-pam python-openssl libffi5
 echo "==> Removing X11 libraries"
