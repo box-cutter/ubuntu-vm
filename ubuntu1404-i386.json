@@ -4,6 +4,7 @@
     "cm": "nocm",
     "cm_version": "",
     "cleanup_pause": "",
+    "custom_script": "",
     "headless": "",
     "update": "false",
     "http_proxy": "{{env `http_proxy`}}",
@@ -107,6 +108,7 @@
       "script/sshd.sh",
       "script/vmtool.sh",
       "script/cmtool.sh",
+      "{{user `custom_script`}}",
       "script/minimize.sh",
       "script/cleanup.sh"
     ]
