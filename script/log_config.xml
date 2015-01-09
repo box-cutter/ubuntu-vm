@@ -1,0 +1,27 @@
+           <periodic-rotating-file-handler name='JSONFILE'>
+               <level name='INFO'/>
+               <formatter>
+                   <pattern-formatter pattern='{"timestamp":"%d","level":"%p","app":"%c","thread":"%t","message":%s}%n'/>
+               </formatter>
+               <file relative-to='jboss.server.log.dir' path='api-server.json'/>
+               <suffix value='.yyyy-MM-dd'/>
+               <append value='true'/>
+           </periodic-rotating-file-handler>
+           <logger category='Lightmesh'>
+               <level name='INFO'/>
+               <handlers>
+                   <handler name='JSONFILE'/>
+               </handlers>
+           </logger>
+           <logger category='Agents.FogHandler'>
+               <level name='INFO'/>
+               <handlers>
+                   <handler name='JSONFILE'/>
+               </handlers>
+           </logger>
+           <logger category='JobDispatcher'>
+               <level name='INFO'/>
+               <handlers>
+                   <handler name='JSONFILE'/>
+               </handlers>
+           </logger>

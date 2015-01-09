@@ -1,0 +1,7 @@
+export PATH=$PATH:~xn/cli-utils/bin
+export XN_DEV=true
+unset JRUBY_HOME
+unset JBOSS_HOME
+unset TORQUEBOX_HOME
+export JRUBY_OPTS="--1.9 -Xcext.enabled=true"
+export JAVA_OPTS="-XX:MaxPermSize=160m -Xmx2g"
