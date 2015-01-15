@@ -8,13 +8,6 @@ jruby_version=$xn_jruby_version
 datomic_version=$xn_datomic_version
 timezone=$xn_timezone
 
-silent() {
-  if [[ $debug ]] ; then
-    "$@"
-  else
-    "$@" &>/dev/null
-  fi
-}
 hr() {
 printf "%$(tput cols)s\n"|tr " " "-"
 }
@@ -35,18 +28,18 @@ export JRUBY_OPTS=--dev
 hr
 echo "Setting timezone:"
 echo "$timezone" | sudo tee /etc/timezone
-silent sudo dpkg-reconfigure --frontend noninteractive tzdata
+sudo dpkg-reconfigure --frontend noninteractive tzdata
 
 hr
 echo "Installing base packages"
-silent sudo apt-get update
+sudo apt-get update
 sudo apt-get install -y --force-yes software-properties-common python-software-properties
 sudo apt-get install -y git curl wget vim maven nodejs npm unzip zsh htop
 sudo ln -s /usr/bin/nodejs /usr/bin/node
 
 hr
 echo "Configuring shell"
-silent git clone git://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh || true
+git clone git://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh || true
 cp ~/.oh-my-zsh/templates/zshrc.zsh-template ~/.zshrc
 sudo chsh -s /usr/bin/zsh vagrant
 
@@ -54,13 +47,13 @@ hr
 echo "Installing RVM"
 echo progress-bar > ~/.curlrc
 echo gem: --no-document > ~/.gemrc
-silent gpg --keyserver hkp://keys.gnupg.net --recv-keys D39DC0E3
-curl -sSL https://get.rvm.io | silent bash -s stable --auto-dotfiles
+gpg --keyserver hkp://keys.gnupg.net --recv-keys D39DC0E3
+curl -sSL https://get.rvm.io | bash -s stable --auto-dotfiles
 source $HOME/.rvm/scripts/rvm
 
 hr
 echo "Installing JRuby"
-silent rvm mount -r https://s3.amazonaws.com/jruby.org/downloads/${jruby_version}/jruby-bin-${jruby_version}.tar.gz --verify-downloads 1
+rvm mount -r https://s3.amazonaws.com/jruby.org/downloads/${jruby_version}/jruby-bin-${jruby_version}.tar.gz --verify-downloads 1
 rvm use jruby-${jruby_version} --default
 gem update --system
 gem source -a https://rubygems.org
@@ -68,11 +61,15 @@ gem source -r http://rubygems.org/
 
 hr
 echo "Installing Java"
-silent sudo add-apt-repository ppa:webupd8team/java
-silent sudo apt-get update
+sudo add-apt-repository -y ppa:webupd8team/java
+echo "Java: Updating apt"
+sudo apt-get update
 echo oracle-java7-installer shared/accepted-oracle-license-v1-1 select true | sudo /usr/bin/debconf-set-selections
-silent sudo apt-get install -yq oracle-java7-installer
-silent sudo apt-get install -yq oracle-java7-set-default
+echo "Java: Installing Java package"
+sudo apt-get install -yq oracle-java7-installer
+echo "Java: Installing default"
+sudo apt-get install -yq oracle-java7-set-default
+echo "Java: Setting default"
 sudo update-java-alternatives -s java-7-oracle
 
 hr
@@ -88,7 +85,7 @@ echo "Installing Lein"
 cd $HOME
 mkdir -p bin
 cd bin
-silent wget https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein
+wget https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein
 chmod a+x $HOME/bin/lein
 
 hr
@@ -108,16 +105,16 @@ sudo chown vagrant /opt/xn_apps
 cd
 
 hr
-echo "Starting Datomic Service"
+echo "Installing Datomic Service"
 hr
 cd $HOME
 wget https://www.dropbox.com/s/2sxd5gqmai58xnl/datomic-free-0.9.4755.zip?dl=1 --quiet -O datomic.zip
 unzip datomic.zip
 rm datomic.zip
 sudo mv datomic-free-0.9.4755 /usr/local/lib/datomic
-sudo cp /vagrant/config/datomic.conf /etc/init/datomic.conf
+sudo cp datomic.conf /etc/init/datomic.conf
 sudo mkdir -p /etc/datomic
-sudo ln -s /vagrant/config/transactor.properties /etc/datomic/transactor.properties
+sudo ln -s transactor.properties /etc/datomic/transactor.properties
 sudo initctl reload-configuration
 
 hr
