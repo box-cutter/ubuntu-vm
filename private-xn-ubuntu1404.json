@@ -3,8 +3,8 @@
     "version": "0.1.1",
     "cm": "nocm",
     "cm_version": "",
-    "cleanup_pause": "10",
-    "headless": "true",
+    "cleanup_pause": "",
+    "headless": "",
     "update": "false",
     "ssh_username": "vagrant",
     "ssh_password": "vagrant",
@@ -18,10 +18,13 @@
     "xn_timezone": "America/Toronto",
     "xn_client": "default",
     "xn_datomic_version": "0.9.4755",
-    "xn_debug": "",
+    "xn_pm_key": "{{env `xn_gemauth`}}",
+    "xn_mcfly_key": "{{env `xn_gemauth`}}",
+    "xn_pm_version": "0.6.3.pre",
+    "xn_mcfly_version": "0.7.4.pre",
     "cpus": "2",
     "mem": "2048",
-    "disk": "10140",
+    "xn_debug": "",
     "iso_url": "http://releases.ubuntu.com/14.04/ubuntu-14.04.1-server-amd64.iso",
     "iso_checksum": "401c5f6666fe2879ac3a9a3247b487723410cf88",
     "custom_script": "script/xn_provision.sh"
@@ -61,7 +64,7 @@
       "<enter>"
     ],
     "shutdown_command": "echo 'vagrant'|sudo -S shutdown -P now",
-    "disk_size": "{{ user `disk` }}",
+    "disk_size": 10140,
     "vmx_data": {
       "memsize": "{{ user `mem` }}",
       "numvcpus": "{{ user `cpus` }}"
@@ -93,7 +96,7 @@
       "initrd=/install/initrd.gz -- <enter>"
     ],
     "shutdown_command": "echo 'vagrant'|sudo -S shutdown -P now",
-    "disk_size": "{{ user `disk` }}",
+    "disk_size": 10140,
     "vboxmanage": [
       ["modifyvm", "{{.Name}}", "--memory", "{{ user `mem` }}"],
       ["modifyvm", "{{.Name}}", "--cpus", "{{ user `cpus` }}"]
@@ -124,7 +127,7 @@
       "initrd=/install/initrd.gz -- <enter>"
     ],
     "shutdown_command": "echo 'vagrant'|sudo -S shutdown -P now",
-    "disk_size": "{{ user `disk` }}",
+    "disk_size": 10140,
     "prlctl": [
       ["set", "{{.Name}}", "--memsize", "{{ user `mem` }}"],
       ["set", "{{.Name}}", "--cpus", "{{ user `cpus` }}"]
@@ -160,9 +163,14 @@
   {
     "type": "shell",
     "environment_vars": [
-      "xn_timezone={{user `xn_timezone`}}",
       "xn_jruby_version={{user `xn_jruby_version`}}",
-      "xn_datomic_version={{user `xn_datomic_version`}}"
+      "xn_timezone={{user `xn_timezone`}}",
+      "xn_client={{user `xn_client`}}",
+      "xn_datomic_version={{user `xn_datomic_version`}}",
+      "xn_pm_key={{user `xn_pm_key`}}",
+      "xn_mcfly_key={{user `xn_mcfly_key` }}",
+      "xn_pm_version={{user `xn_pm_version`}}",
+      "xn_mcfly_version={{user `xn_mcfly_version`}}"
     ],
     "execute_command": "{{.Vars}} source '{{.Path}}'",
     "scripts": [
