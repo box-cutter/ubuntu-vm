@@ -30,4 +30,9 @@ if [ "$INSTALL_VAGRANT_KEY" = "true" ] || [ "$INSTALL_VAGRANT_KEY" = "1" ]; then
     echo "${VAGRANT_INSECURE_KEY}" > $SSH_USER_HOME/.ssh/authorized_keys
     chmod 600 $SSH_USER_HOME/.ssh/authorized_keys
     chown -R $SSH_USER:$SSH_USER $SSH_USER_HOME/.ssh
+
+    # Create data folder
+    mkdir /data
+    chmod 755 /data   
+    chown -R $SSH_USER:$SSH_USER /data    
 fi

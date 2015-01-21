@@ -17,7 +17,7 @@
     "xn_jruby_version": "1.7.18",
     "xn_timezone": "America/Toronto",
     "xn_client": "default",
-    "xn_datomic_version": "0.9.4755",
+    "xn_datomic_version": "free-0.9.4755",
     "xn_debug": "",
     "cpus": "4",
     "mem": "2048",
@@ -129,7 +129,13 @@
       ["set", "{{.Name}}", "--memsize", "{{ user `mem` }}"],
       ["set", "{{.Name}}", "--cpus", "{{ user `cpus` }}"]
     ]
-  }],
+  }
+  //{
+  //  "type": "docker",
+  //  "image": "xn-ubuntu",
+  //  "export_path": "docker_image.tar"
+  //}
+  ],
   "provisioners": [
   {
     "type": "shell",
@@ -156,6 +162,11 @@
       "script/docker.sh",
       "script/cmtool.sh"
     ]
+  },
+  {
+    "type": "file",
+    "source": "script/data",
+    "destination": "/"
   },
   {
     "type": "shell",

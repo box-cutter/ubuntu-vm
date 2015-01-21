@@ -2,6 +2,8 @@
 
 echo "Configuring XN VM. This process will take several minutes."
 
+set -e
+
 # variables
 debug=
 jruby_version=$xn_jruby_version
@@ -20,7 +22,12 @@ export DEBIAN_FRONTEND=noninteractive
 export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 sudo locale-gen en_US.UTF-8
-#sudo dpkg-reconfigure locales
+sudo dpkg-reconfigure locales
+
+hr
+echo "Validating script upload"
+hr
+ls -l /data
 
 # make jruby processes boot faster
 export JRUBY_OPTS=--dev
@@ -32,16 +39,15 @@ sudo dpkg-reconfigure --frontend noninteractive tzdata
 
 hr
 echo "Installing base packages"
-sudo apt-get update
 sudo apt-get install -y --force-yes software-properties-common python-software-properties
-sudo apt-get install -y git curl wget vim maven nodejs npm unzip zsh htop
+sudo apt-get install -y --force-yes git curl wget vim maven nodejs npm unzip zsh htop
 sudo ln -s /usr/bin/nodejs /usr/bin/node
 
 hr
 echo "Configuring shell"
 git clone git://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh || true
 cp ~/.oh-my-zsh/templates/zshrc.zsh-template ~/.zshrc
-sudo chsh -s /usr/bin/zsh vagrant
+sudo chsh -s /usr/bin/zsh $USER
 
 hr
 echo "Installing RVM"
@@ -56,8 +62,7 @@ echo "Installing JRuby"
 rvm mount -r https://s3.amazonaws.com/jruby.org/downloads/${jruby_version}/jruby-bin-${jruby_version}.tar.gz --verify-downloads 1
 rvm use jruby-${jruby_version} --default
 gem update --system
-gem source -a https://rubygems.org
-gem source -r http://rubygems.org/
+gem sources --add https://rubygems.org/ --remove http://rubygems.org/
 
 hr
 echo "Installing Java"
@@ -87,6 +92,7 @@ mkdir -p bin
 cd bin
 wget https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein
 chmod a+x $HOME/bin/lein
+lein
 
 hr
 echo "Installing Node deps"
@@ -101,20 +107,20 @@ gem install --quiet torquebox-server -v '3.1.1'
 hr
 echo "Configuring XN"
 sudo mkdir -p /opt/xn_apps
-sudo chown vagrant /opt/xn_apps
+sudo chown $USER /opt/xn_apps
 cd
 
 hr
 echo "Installing Datomic Service"
 hr
 cd $HOME
-wget https://www.dropbox.com/s/2sxd5gqmai58xnl/datomic-free-0.9.4755.zip?dl=1 --quiet -O datomic.zip
+wget https://www.dropbox.com/s/2sxd5gqmai58xnl/datomic-${datomic_version}.zip?dl=1 --quiet -O datomic.zip
 unzip datomic.zip
 rm datomic.zip
-sudo mv datomic-free-0.9.4755 /usr/local/lib/datomic
-sudo cp datomic.conf /etc/init/datomic.conf
+sudo mv datomic-${datomic_version} /usr/local/lib/datomic
+sudo ln -s /data/etc_init_datomic.conf /etc/init/datomic.conf
 sudo mkdir -p /etc/datomic
-sudo ln -s transactor.properties /etc/datomic/transactor.properties
+sudo ln -s /data/transactor.properties /etc/datomic/transactor.properties
 sudo initctl reload-configuration
 
 hr
