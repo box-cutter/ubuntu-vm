@@ -145,9 +145,9 @@
       "script/vagrant.sh",
       "script/sshd.sh",
       "script/vmtool.sh",
-      "script/cleanup.sh",
       "script/cmtool.sh",
-      "{{ user `custom_script` }}"
+      "{{ user `custom_script` }}",
+      "script/cleanup.sh"
     ]
   }],
   "post-processors": [{
