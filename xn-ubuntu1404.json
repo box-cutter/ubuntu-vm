@@ -1,10 +1,10 @@
 {
   "variables": {
-    "version": "0.1.1",
+    "version": "0.1.2",
     "cm": "nocm",
     "cm_version": "",
     "cleanup_pause": "10",
-    "headless": "false",
+    "headless": "true",
     "update": "false",
     "ssh_username": "vagrant",
     "ssh_password": "vagrant",
@@ -17,7 +17,7 @@
     "xn_jruby_version": "1.7.18",
     "xn_timezone": "America/Toronto",
     "xn_client": "default",
-    "xn_datomic_version": "free-0.9.4755",
+    "xn_datomic_version": "0.9.5130",
     "xn_debug": "",
     "cpus": "4",
     "mem": "2048",
@@ -130,11 +130,6 @@
       ["set", "{{.Name}}", "--cpus", "{{ user `cpus` }}"]
     ]
   }
-  //{
-  //  "type": "docker",
-  //  "image": "xn-ubuntu",
-  //  "export_path": "docker_image.tar"
-  //}
   ],
   "provisioners": [
   {

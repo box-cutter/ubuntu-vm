@@ -107,20 +107,21 @@ gem install --quiet torquebox-server -v '3.1.1'
 hr
 echo "Configuring XN"
 sudo mkdir -p /opt/xn_apps
-sudo chown $USER /opt/xn_apps
+sudo chown -R $USER /opt
 cd
 
 hr
 echo "Installing Datomic Service"
-hr
 cd $HOME
-wget https://www.dropbox.com/s/2sxd5gqmai58xnl/datomic-${datomic_version}.zip?dl=1 --quiet -O datomic.zip
+wget "https://s3.amazonaws.com/xn-datomic/datomic-free-${datomic_version}.zip?dl=1" --quiet -O datomic.zip
 unzip datomic.zip
 rm datomic.zip
-sudo mv datomic-${datomic_version} /usr/local/lib/datomic
-sudo ln -s /data/etc_init_datomic.conf /etc/init/datomic.conf
+mkdir -p /opt/datomic/
+mv "datomic-free-${datomic_version}" /opt/datomic/
+ln -sf "/opt/datomic/datomic-free-${datomic_version}" /opt/datomic/current
+sudo cp /data/etc_init_datomic.conf /etc/init/datomic.conf
 sudo mkdir -p /etc/datomic
-sudo ln -s /data/transactor.properties /etc/datomic/transactor.properties
+sudo ln -sf /data/transactor.properties /etc/datomic/transactor.properties
 sudo initctl reload-configuration
 
 hr
