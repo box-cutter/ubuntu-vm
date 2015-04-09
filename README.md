@@ -16,4 +16,4 @@ s3cmd cp box/[virtualbox|vmware]/xn-ubuntu1404-nocm-[version].box s3://xn-boxes/
 -  Create a new version https://atlas.hashicorp.com/xnlogic/boxes/xn-ubuntu1404/versions/new  
 -  Add providers: *virtualbox* and *vmware_desktop*
 -  Point to s3 url for new box version: http://xn-boxes.s3.amazonaws.com/[virtualbox|vmware]/xn-ubuntu1404-nocm-[version].box  
-
+-  Publish  
