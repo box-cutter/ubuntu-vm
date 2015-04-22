@@ -21,6 +21,20 @@ Note: to build an amazon AMI, ensure your AWS credentials are filled in to vars.
 [Amazon EC2 AMI Tools](http://aws.amazon.com/developertools/368)
 You'll also need an x509 certificate, you can create one via script/gen_x509.sh
 
+### Uploading for Vagrant Cloud (in separate sessions for each virtualbox and vmware):
+```
+brew install awscli
+aws configure
+s3cmd cp box/xn-ubuntu1404-[virtualbox|vmware]-[version].box s3://xn-boxes/
+```
+
+-  Add to https://atlas.hashicorp.com/vagrant under the xnlogic user as xnlogic/xn-ubuntu1404  
+-  Create a new version https://atlas.hashicorp.com/xnlogic/boxes/xn-ubuntu1404/versions/new  
+-  Add providers: *virtualbox* and *vmware_desktop*
+-  Point to s3 url for new box version: http://xn-boxes.s3.amazonaws.com/xn-ubuntu1404-[virtualbox|vmware]-[version].box 
+-  Publish  
+
+
 ### Proxy Settings
 
 The templates respect the following network proxy environment variables
@@ -32,3 +46,5 @@ process, should you be using a proxy:
 * ftp_proxy
 * rsync_proxy
 * no_proxy
+
+
