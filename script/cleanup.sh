@@ -1,5 +1,8 @@
 #!/bin/bash -eux
 
+SSH_USER=${SSH_USER:-vagrant}
+SSH_USER_HOME=${SSH_USER_HOME:-/home/${SSH_USER}}
+SSH_USER_PASS=${SSH_USER_PASS:-${SSH_USER}}
 CLEANUP_PAUSE=${CLEANUP_PAUSE:-0}
 echo "==> Pausing for ${CLEANUP_PAUSE} seconds..."
 sleep ${CLEANUP_PAUSE}
@@ -36,7 +39,7 @@ dpkg --get-selections | grep -v deinstall
 # Remove Bash history
 unset HISTFILE
 rm -f /root/.bash_history
-rm -f /home/vagrant/.bash_history
+rm -f ${SSH_USER_HOME}/.bash_history
 
 # Clean up log files
 find /var/log -type f | while read f; do echo -ne '' > $f; done;
@@ -63,5 +66,5 @@ dd if=/dev/zero of=/EMPTY bs=1M
 rm -f /EMPTY
 
 # Make sure we wait until all the data is written to disk, otherwise
-# Packer might quite too early before the large files are deleted
+# Packer might quit too early before the large files are deleted
 sync

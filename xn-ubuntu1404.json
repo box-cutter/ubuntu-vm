@@ -1,30 +1,39 @@
 {
   "variables": {
-    "version": "0.1.2",
-    "cm": "nocm",
-    "cm_version": "",
+    "version": "{{env `VERSION`}}",
     "cleanup_pause": "10",
-    "headless": "true",
-    "update": "false",
-    "ssh_username": "vagrant",
-    "ssh_password": "vagrant",
-    "install_vagrant_key": true,
+    "headless": "{{env `HEADLESS`}}",
+    "update": "{{env `UPDATE`}}",
+    "install_vagrant_key": "{{env `INSTALL_VAGRANT_KEY`}}",
+    "ssh_user": "{{env `SSH_USER`}}",
+    "ssh_user_pass": "{{env `SSH_USER_PASS`}}",
+    "ssh_user_home": "{{env `SSH_USER_HOME`}}",
     "http_proxy": "{{env `http_proxy`}}",
     "https_proxy": "{{env `https_proxy`}}",
     "ftp_proxy": "{{env `ftp_proxy`}}",
     "rsync_proxy": "{{env `rsync_proxy`}}",
     "no_proxy": "{{env `no_proxy`}}",
-    "xn_jruby_version": "1.7.18",
-    "xn_timezone": "America/Toronto",
-    "xn_client": "default",
-    "xn_datomic_version": "0.9.5130",
-    "xn_debug": "",
-    "cpus": "4",
-    "mem": "2048",
-    "disk": "10140",
-    "iso_url": "http://releases.ubuntu.com/14.04/ubuntu-14.04.1-server-amd64.iso",
-    "iso_checksum": "401c5f6666fe2879ac3a9a3247b487723410cf88",
-    "custom_script": "script/xn_provision.sh"
+    "xn_jruby_version": "{{env `XN_JRUBY_VERSION`}}",
+    "xn_datomic_version": "{{env `XN_DATOMIC_VERSION`}}",
+    "xn_torquebox_version": "{{env `XN_TORQUEBOX_VERSION`}}",
+    "xn_timezone": "{{env `XN_TIMEZONE`}}",
+    "xn_client": "{{env `XN_CLIENT`}}",
+    "debug": "{{env `DEBUG`}}",
+    "cpus": "{{env `CPUS`}}",
+    "mem": "{{env `MEM`}}",
+    "disk": "{{env `DISK`}}",
+    "iso_url": "{{env `ISO_URL`}}",
+    "iso_checksum": "{{env `ISO_CHECKSUM`}}",
+    "custom_script": "script/xn_provision.sh",
+    "aws_access_key": "{{env `AWS_ACCESS_KEY`}}",
+    "aws_secret_key": "{{env `AWS_SECRET_KEY`}}",
+    "aws_security_group_id": "{{env `AWS_SECURITY_GROUP_ID`}}",
+    "aws_region": "{{env `AWS_REGION`}}",
+    "aws_instance_type": "{{env `AWS_INSTANCE_TYPE`}}",
+    "aws_source_ami": "{{env `AWS_SOURCE_AMI`}}",
+    "aws_virtualization_type": "{{env `AWS_VIRTUALIZATION_TYPE`}}",
+    "x509_cert_path": "{{env `X509_CERT_PATH`}}",
+    "x509_key_path": "{{env `X509_KEY_PATH`}}"
   },
   "builders": [{
     "vm_name": "xn-ubuntu1404",
@@ -34,8 +43,8 @@
     "iso_url": "{{ user `iso_url` }}",
     "iso_checksum": "{{ user `iso_checksum` }}",
     "iso_checksum_type": "sha1",
-    "ssh_username": "{{ user `ssh_username` }}",
-    "ssh_password": "{{ user `ssh_password` }}",
+    "ssh_username": "{{ user `ssh_user` }}",
+    "ssh_password": "{{ user `ssh_user_pass` }}",
     "ssh_wait_timeout": "10000s",
     "headless": "{{ user `headless` }}",
     "tools_upload_flavor": "linux",
@@ -60,7 +69,7 @@
       " -- ",
       "<enter>"
     ],
-    "shutdown_command": "echo 'vagrant'|sudo -S shutdown -P now",
+    "shutdown_command": "echo {{ user `ssh_user_pass` }}|sudo -S shutdown -P now",
     "disk_size": "{{ user `disk` }}",
     "vmx_data": {
       "memsize": "{{ user `mem` }}",
@@ -77,8 +86,8 @@
     "guest_os_type": "Ubuntu_64",
     "guest_additions_path": "VBoxGuestAdditions_{{.Version}}.iso",
     "virtualbox_version_file": ".vbox_version",
-    "ssh_username": "{{ user `ssh_username` }}",
-    "ssh_password": "{{ user `ssh_password` }}",
+    "ssh_username": "{{ user `ssh_user` }}",
+    "ssh_password": "{{ user `ssh_user_pass` }}",
     "ssh_wait_timeout": "10000s",
     "headless": "{{ user `headless` }}",
     "boot_command": [
@@ -92,7 +101,7 @@
       "keyboard-configuration/variant=USA console-setup/ask_detect=false ",
       "initrd=/install/initrd.gz -- <enter>"
     ],
-    "shutdown_command": "echo 'vagrant'|sudo -S shutdown -P now",
+    "shutdown_command": "echo {{ user `ssh_user_pass` }}|sudo -S shutdown -P now",
     "disk_size": "{{ user `disk` }}",
     "vboxmanage": [
       ["modifyvm", "{{.Name}}", "--memory", "{{ user `mem` }}"],
@@ -109,8 +118,8 @@
     "guest_os_type": "ubuntu",
     "parallels_tools_flavor": "lin",
     "prlctl_version_file": ".prlctl_version",
-    "ssh_username": "{{ user `ssh_username` }}",
-    "ssh_password": "{{ user `ssh_password` }}",
+    "ssh_username": "{{ user `ssh_user` }}",
+    "ssh_password": "{{ user `ssh_user_pass` }}",
     "ssh_wait_timeout": "10000s",
     "boot_command": [
       "<esc><esc><enter><wait>",
@@ -123,52 +132,65 @@
       "keyboard-configuration/variant=USA console-setup/ask_detect=false ",
       "initrd=/install/initrd.gz -- <enter>"
     ],
-    "shutdown_command": "echo 'vagrant'|sudo -S shutdown -P now",
+    "shutdown_command": "echo {{ user `ssh_user_pass` }}|sudo -S shutdown -P now",
     "disk_size": "{{ user `disk` }}",
     "prlctl": [
       ["set", "{{.Name}}", "--memsize", "{{ user `mem` }}"],
       ["set", "{{.Name}}", "--cpus", "{{ user `cpus` }}"]
     ]
+  },
+  {
+    "type": "amazon-instance",
+    "access_key": "{{ user `aws_access_key` }}",
+    "secret_key": "{{ user `aws_secret_key` }}",
+    "account_id": "271689560906",
+    "s3_bucket": "xn-boxes",
+    "region": "us-east-1",
+    "source_ami": "ami-823f3aea",
+    "instance_type": "m3.medium",
+    "ssh_username": "ubuntu",
+    "security_group_ids": "sg-a2beddca",
+    "ami_name": "packer-{{timestamp}}",
+    "x509_cert_path": "{{user `x509_cert_path`}}",
+    "x509_key_path": "{{user `x509_key_path`}}"
   }
   ],
   "provisioners": [
   {
     "type": "shell",
     "environment_vars": [
-      "CM={{user `cm`}}",
-      "CM_VERSION={{user `cm_version`}}",
       "CLEANUP_PAUSE={{user `cleanup_pause`}}",
       "UPDATE={{user `update`}}",
       "INSTALL_VAGRANT_KEY={{user `install_vagrant_key`}}",
-      "SSH_USERNAME={{user `ssh_username`}}",
-      "SSH_PASSWORD={{user `ssh_password`}}",
+      "SSH_USER={{user `ssh_user`}}",
+      "SSH_USER_PASS={{user `ssh_user_pass`}}",
+      "SSH_USER_HOME={{user `ssh_user_home`}}",
       "http_proxy={{user `http_proxy`}}",
       "https_proxy={{user `https_proxy`}}",
       "ftp_proxy={{user `ftp_proxy`}}",
       "rsync_proxy={{user `rsync_proxy`}}",
       "no_proxy={{user `no_proxy`}}"
     ],
-    "execute_command": "echo 'vagrant' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
+    "execute_command": "echo {{ user `ssh_user_pass` }}| {{.Vars}} sudo -E -S bash '{{.Path}}'",
     "scripts": [
+      "script/env.sh",
       "script/update.sh",
       "script/vagrant.sh",
       "script/sshd.sh",
       "script/vmtool.sh",
-      "script/docker.sh",
-      "script/cmtool.sh"
+      "script/docker.sh"
     ]
-  },
-  {
-    "type": "file",
-    "source": "script/data",
-    "destination": "/"
   },
   {
     "type": "shell",
     "environment_vars": [
+      "SSH_USER={{user `ssh_user`}}",
+      "SSH_USER_PASS={{user `ssh_user_pass`}}",
+      "SSH_USER_HOME={{user `ssh_user_home`}}",
       "xn_timezone={{user `xn_timezone`}}",
       "xn_jruby_version={{user `xn_jruby_version`}}",
-      "xn_datomic_version={{user `xn_datomic_version`}}"
+      "xn_datomic_version={{user `xn_datomic_version`}}",
+      "xn_torquebox_version={{user `xn_torquebox_version`}}"
     ],
     "execute_command": "{{.Vars}} source '{{.Path}}'",
     "scripts": [
@@ -178,17 +200,21 @@
   {
     "type": "shell",
     "environment_vars": [
+      "SSH_USER={{user `ssh_user`}}",
+      "SSH_USER_PASS={{user `ssh_user_pass`}}",
+      "SSH_USER_HOME={{user `ssh_user_home`}}",
       "CLEANUP_PAUSE={{user `cleanup_pause`}}"
     ],
-    "execute_command": "echo 'vagrant' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
+    "execute_command": "echo {{ user `ssh_user_pass` }}| {{.Vars}} sudo -E -S bash '{{.Path}}'",
     "scripts": [
-      "script/cleanup.sh"
+      "script/cleanup.sh",
+      "script/minimize.sh"
     ]
   }
   ],
   "post-processors": [{
     "type": "vagrant",
     "keep_input_artifact": true,
-    "output": "box/{{.Provider}}/xn-ubuntu1404-{{user `cm`}}{{user `cm_version`}}-{{user `version`}}.box"
+    "output": "box/xn-ubuntu1404-{{.Provider}}-{{user `version`}}.box"
   }]
 }

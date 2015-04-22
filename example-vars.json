@@ -1,0 +1,34 @@
+{
+  "version": "0.1.13",
+  "headless": "true",
+  "update": "false",
+  "install_vagrant_key": "false",
+
+  "ssh_user": "ubuntu",
+  "ssh_user_pass": "ubuntu",
+  "ssh_user_home": "/home/ubuntu",
+
+  "aws_access_key": "",
+  "aws_secret_key": "",
+  "aws_security_group_id": "",
+  "aws_region": "us-east-1",
+  "aws_instance_type": "t2.small",
+  "aws_source_ami": "ami-3234315a",
+  "aws_virtualization_type": "hvm",
+
+  "x509_cert_path": "../certs/xn-certificate.pem",
+  "x509_key_path": "../certs/xn-key.pem",
+
+  "xn_timezone": "America/Toronto",
+  "xn_client": "default",
+  "xn_jruby_version": "1.7.18",
+  "xn_datomic_version": "0.9.5130",
+  "xn_torquebox_version": "3.1.1",
+  "debug": "",
+  
+  "cpus": "4",
+  "mem": "2048",
+  "disk": "10140",
+  "iso_url": "http://releases.ubuntu.com/14.04/ubuntu-14.04.1-server-amd64.iso",
+  "iso_checksum": "401c5f6666fe2879ac3a9a3247b487723410cf88"
+}

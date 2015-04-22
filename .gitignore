@@ -1,4 +1,5 @@
 packer_cache/
+vars.json
 output-*
 *.box
 *.tar.gz

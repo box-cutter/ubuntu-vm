@@ -1,0 +1,65 @@
+language: python
+
+branches:
+  except:
+   - documentation
+
+matrix:
+  fast_finish: true
+
+env:
+  matrix:
+   - PACKER_VERSION="0.7.1" AWS_INSTANCE_TYPE="t2.small" AWS_VIRTUALIZATION_TYPE="hvm" AWS_SOURCE_AMI="ami-f63b3e9e" IP_INDEX=15 STRIP_COMMENTS=true
+   - PACKER_VERSION="0.7.1" AWS_INSTANCE_TYPE="t2.small" AWS_VIRTUALIZATION_TYPE="hvm" AWS_SOURCE_AMI="ami-f63b3e9e" IP_INDEX=15 STRIP_COMMENTS=false
+  global:
+   # Secure variables: AWS_SECRET_KEY, AWS_ACCESS_KEY, AWS_SECURITY_GROUP_ID, AWS_OWNER_ID, AWS_SECURITY_GROUP, AWS_KEYPAIR_NAME, DIGITALOCEAN_API_TOKEN (not in the order as below)
+   - AWS_REGION="us-east-1"
+   - DEFAULT_SSH_USER="ubuntu"
+   - PACKER_GRAPHITE_BUILD_NAME="travis-packer"
+   - PACKER_GRAPHITE_EMAIL="us@xnlogic.com"
+
+before_install:
+ - sudo apt-get update -y --fix-missing
+
+install:
+ # Install Packer.io
+ - curl -o /tmp/packer.zip -L "https://dl.bintray.com/mitchellh/packer/packer_${PACKER_VERSION}_linux_amd64.zip"
+ - sudo unzip -d /usr/local/bin /tmp/packer.zip
+ - sudo pip install awscli
+ - echo "Using AWSvCLI version $(aws --version)"
+ # Install some basic testing dependencies
+ - sudo apt-get -y install wget stress
+
+before_script:
+ # Create the AWS CLI configuration file
+ - mkdir ~/.aws
+ - printf "[default]\naws_access_key_id = ${AWS_ACCESS_KEY}\naws_secret_access_key = ${AWS_SECRET_KEY}\noutput = text\nregion = ${AWS_REGION}\n" | tee -a ~/.aws/config >/dev/null
+ - chmod 600 ~/.aws/config
+ # Keep the project's build script happy by supplying a default config file
+ - cp example-vars.json vars.json
+
+script:
+ # Run the packer build script to create an AWS AMI
+ - ./build.sh amazon-ebs
+ # Make sure build script completed successfully
+ - if grep -q 'Builds finished but no artifacts were created' packer.log; then test ! true; fi
+ # Start up an EC2 instance from the newly created AWS AMI
+ - echo `awk '{ print $NF }' packer.log | tail -n 1 | tr -d '\n'` | tee ec2.ami
+ - echo `aws ec2 run-instances --image-id $(cat ec2.ami) --security-groups "${AWS_SECURITY_GROUP}" --key-name "${AWS_KEYPAIR_NAME}" --instance-type "${AWS_INSTANCE_TYPE}" --placement "AvailabilityZone=${AWS_REGION}a" | grep INSTANCES | cut -f 8` | tee ec2.instance
+ # Open up access to the AWS instance from the Travis IP
+ - echo `wget -q -O - http://lisforge.net/ip.php` > travis.ip
+ - aws ec2 authorize-security-group-ingress --group-id $AWS_SECURITY_GROUP_ID --protocol tcp --port 2003 --cidr $(cat travis.ip)/32
+ # Test to confirm that the remote Graphite server is up and receiving data
+ - test-scripts/run-tests.sh "`cat ec2.ip`"
+
+after_script:
+ - test-scripts/cleanup.sh
+ - aws ec2 revoke-security-group-ingress --group-id $AWS_SECURITY_GROUP_ID --protocol tcp --port 2003 --cidr $(cat travis.ip)/32
+ - rm -f ~/.aws/config
+
+notifications:
+  email:
+    recipients:
+      - us@xnlogic.com
+    on_failure: change
+    on_success: change
