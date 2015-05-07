@@ -2,7 +2,7 @@
 
 XN_CLIENT: 'lightmesh'
 timezone: 'America/Toronto'
-DATOMIC_VERSION: '0.9.4755'
 jruby_version: '1.7.20'
+DATOMIC_VERSION: '0.9.5130'
 vm_memory: '2048'
 vm_cpus: '2'
