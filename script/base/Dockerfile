@@ -36,7 +36,7 @@ WORKDIR $HOME
 
 RUN /bin/bash -l -c "echo 'progress-bar' > $HOME/.curlrc"
 
-ENV jruby_version 1.7.18
+ENV jruby_version 1.7.20
 RUN gpg --keyserver hkp://keys.gnupg.net --recv-keys D39DC0E3
 RUN curl -L get.rvm.io | bash -s stable --auto-dotfiles
 RUN /etc/profile.d/rvm.sh
