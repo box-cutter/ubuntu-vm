@@ -58,7 +58,7 @@ ADD https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein $HOM
 RUN chmod a+x $HOME/bin/lein
 RUN /bin/bash -l -c "lein"
 
-RUN gem install --quiet torquebox-server -v '3.1.1'
+RUN gem install --quiet torquebox-server -v '3.1.2'
 
 ADD `pwd`/data /
 WORKDIR /data

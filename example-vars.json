@@ -23,7 +23,7 @@
   "xn_client": "default",
   "xn_jruby_version": "1.7.20",
   "xn_datomic_version": "0.9.5130",
-  "xn_torquebox_version": "3.1.1",
+  "xn_torquebox_version": "3.1.2",
   "debug": "",
   
   "cpus": "4",
